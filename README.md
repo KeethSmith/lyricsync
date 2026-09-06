@@ -8,7 +8,7 @@ Open https://keethsmith.github.io/spotify-lyric-visualizer/ and choose Explore a
 
 1. Create an app at https://developer.spotify.com/dashboard with Web API enabled.
 2. Register the exact redirect URI `https://keethsmith.github.io/spotify-lyric-visualizer/`.
-3. Enter the app's Client ID on the website and connect Spotify.
+3. Set `SPOTIFY_CLIENT_ID` in `config.js` to your public Client ID and push to deploy. Visitors can then click **Sign in with Spotify**, complete sign-in at `https://accounts.spotify.com/authorize`, and return to the site. Never put a client secret in this file. For personal use, a Client ID can also be entered under App configuration on the site.
 4. Play a song in Spotify. The page polls every five seconds and updates lyric position locally every 250 ms.
 
 Spotify developer account requirements and app user restrictions apply. If access is denied, check the app's allowed users and current Spotify development-mode requirements. Lyrics availability varies; plain lyrics and instrumental tracks are handled separately. The demo uses original sample text and does not play audio.
