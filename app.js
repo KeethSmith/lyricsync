@@ -1,7 +1,7 @@
-import {estimateWords,currentWord} from './word-timing.mjs';
+import {currentWord} from './word-timing.mjs?v=actual-1';
 import {lookupLyrics} from './lyric-lookup.mjs';
 import {PLAYBACK_SCOPE, sendPlayback} from './playback.mjs';
-import {parseLrc,activeLine} from './lyrics.mjs';
+import {parseLrc,activeLine} from './lyrics.mjs?v=actual-1';
 import {SPOTIFY_CLIENT_ID} from './config.js?v=2';
 const $=id=>document.getElementById(id), redirect=location.origin+location.pathname.replace(/index\.html$/,'');
 const keys={client:'lyricsync.client',token:'lyricsync.token',auth:'lyricsync.auth'};
@@ -18,15 +18,12 @@ async function spotify(){if(!token)throw Error('Connect Spotify to see your curr
 function empty(title,body){$('wordTimingNote').hidden=true;$('lyrics').replaceChildren();const box=document.createElement('div');box.className='empty';const h=document.createElement('h2'),p=document.createElement('p');h.textContent=title;p.textContent=body;box.append(h,p);$('lyrics').append(box);}
 function renderLyrics(){
   selected=-2;
-  wordTimings=lines.map((line,index)=>{
-    const end=lines.slice(index+1).find(next=>next.time>line.time)?.time||track?.duration_ms||line.time+4000;
-    return estimateWords(line.text,line.time,end);
-  });
-  $('wordTimingNote').hidden=false;
-  $('lyrics').replaceChildren(...wordTimings.map(words=>{
+  wordTimings=lines.map(line=>line.words||[]);
+  $('wordTimingNote').hidden=!wordTimings.some(words=>words.length);
+  $('lyrics').replaceChildren(...lines.map(line=>{
     const p=document.createElement('p');p.className='line';
-    words.forEach((word,index)=>{
-      if(index)p.append(document.createTextNode(' '));
+    if(!line.words){p.textContent=line.text;return p;}
+    line.words.forEach(word=>{
       const span=document.createElement('span');span.className='lyric-word';span.textContent=word.text;p.append(span);
     });
     return p;
