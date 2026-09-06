@@ -81,7 +81,8 @@ function updateControls(position) {
   for (const button of document.querySelectorAll('[data-playback]')) {
     button.disabled = controlBusy || (!token && !demo) || (demo && ['previous','next'].includes(button.dataset.playback));
     if (button.dataset.playback === 'toggle') {
-      button.textContent = playing ? 'Ⅱ' : '▶';
+      button.textContent = '';
+      button.dataset.playing = String(playing);
       button.setAttribute('aria-label', playing ? 'Pause' : 'Play');
     }
   }
@@ -142,7 +143,8 @@ $('controlReconnect').onclick=()=>{
 function applyTheme(theme) {
   document.documentElement.dataset.theme=theme;
   for(const button of document.querySelectorAll('[data-theme-toggle]')) {
-    button.textContent=theme==='dark'?'Light mode':'Dark mode';
+    button.textContent='';
+    button.title=theme==='dark'?'Switch to light mode':'Switch to dark mode';
     button.setAttribute('aria-label',theme==='dark'?'Switch to light mode':'Switch to dark mode');
   }
 }
