@@ -51,3 +51,4 @@
 @media(max-width:560px){#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{padding-left:12px;padding-right:105px}#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{right:8px;gap:5px;flex-direction:column}}
 
 #rejectLyrics.reporting{opacity:1;color:var(--text);background:linear-gradient(90deg,color-mix(in srgb,var(--green) 38%,transparent) 0 var(--report-progress),transparent var(--report-progress) 100%);transition:background .2s linear;font-variant-numeric:tabular-nums}
+.empty .instrumental-report{margin-top:8px;padding:9px 14px;font-size:11px;color:var(--green)}
