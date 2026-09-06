@@ -173,6 +173,7 @@ for(const button of document.querySelectorAll('[data-theme-toggle]'))button.addE
   const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
   applyTheme(theme);try{localStorage.setItem('lyricsync.theme',theme);}catch{}
 });
+for(const checkbox of [$('follow'),$('followFullscreen')])checkbox.addEventListener('change',()=>{for(const peer of [$('follow'),$('followFullscreen')])peer.checked=checkbox.checked;});
 
 $('rejectLyrics').onclick=async()=>{
   if(reportBusy||demo||!track?.id||!Number.isSafeInteger(displayedLyrics?.id))return;

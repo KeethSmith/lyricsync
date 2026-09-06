@@ -50,3 +50,5 @@
 #lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{position:absolute;right:18px;top:50%;transform:translateY(-50%);justify-content:flex-end;gap:8px;flex-wrap:nowrap;font-size:9px}
 #lyricsPanel:fullscreen .lyrics-footer-options [data-theme-toggle],#lyricsPanel.lyrics-expanded .lyrics-footer-options [data-theme-toggle]{width:34px;height:34px;min-width:34px;flex-basis:34px}
 @media(max-width:560px){#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{padding-left:12px;padding-right:105px}#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{right:8px;gap:5px;flex-direction:column}}
+.viewer-options{display:flex;align-items:center;gap:7px;margin-top:14px}.lyrics-footer-options{display:none}
+#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{display:flex}
