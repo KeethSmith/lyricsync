@@ -1,5 +1,5 @@
 import {parseLrc,activeLine} from './lyrics.mjs';
-import {SPOTIFY_CLIENT_ID} from './config.js';
+import {SPOTIFY_CLIENT_ID} from './config.js?v=2';
 const $=id=>document.getElementById(id), redirect=location.origin+location.pathname.replace(/index\.html$/,'');
 const keys={client:'lyricsync.client',token:'lyricsync.token',auth:'lyricsync.auth'};
 let token=JSON.parse(sessionStorage.getItem(keys.token)||'null'), track=null, lines=[], base=0, sampled=0, playing=false, demo=false, selected=-2, generation=0, timer, busy=false, cooldown=0;
