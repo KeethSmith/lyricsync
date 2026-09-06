@@ -29,6 +29,11 @@ test('failed flag is surfaced and never automatically retried',async()=>{
   await assert.rejects(flagLyrics(123,{solve:async()=>'test:solved',request:async()=>++calls===1?{ok:true,json:async()=>({})}:{ok:false,status:429}}),/429/);
   assert.equal(calls,2);
 });
+test('instrumental report sends its distinct fixed reason',async()=>{
+  const calls=[];
+  await flagLyrics(321,{content:'The track is not instrumental',relay:'https://relay.example',solve:async()=>'test:solved',request:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>({})};}});
+  assert.deepEqual(JSON.parse(calls[1].options.body),{trackId:321,content:'The track is not instrumental'});
+});
 test('excluded exact and search versions never return; exhaustion returns null',async()=>{
   const item={name:'Song',artists:[{name:'Artist'}],album:{name:'Album'},duration_ms:60000};
   const exact={id:1,trackName:'Song',artistName:'Artist',albumName:'Album',duration:60,syncedLyrics:'[00:01]One\n[00:02]Two'};

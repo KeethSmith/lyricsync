@@ -1,6 +1,7 @@
 // Fixed-purpose LRCLIB relay. No credentials or arbitrary upstream URLs.
 import {createServer} from 'node:http';
 const allowedOrigin=process.env.SITE_ORIGIN||'https://keethsmith.github.io';
+const reportReasons=new Set(["The lyrics don't match the audio",'The track is not instrumental']);
 const buckets=new Map();
 const server=createServer(async(req,res)=>{
   res.setHeader('Vary','Origin');
@@ -22,9 +23,9 @@ const server=createServer(async(req,res)=>{
     if(req.url==='/api/flag'){
       const payload=JSON.parse(Buffer.concat(chunks).toString('utf8'));
       const proof=req.headers['x-publish-token'];
-      if(!Number.isSafeInteger(payload.trackId)||payload.trackId<=0||typeof proof!=='string'||!/^[A-Za-z0-9]{32}:\d{1,20}$/.test(proof)){res.writeHead(400);res.end('Invalid report');return;}
+      if(!Number.isSafeInteger(payload.trackId)||payload.trackId<=0||!reportReasons.has(payload.content)||typeof proof!=='string'||!/^[A-Za-z0-9]{32}:\d{1,20}$/.test(proof)){res.writeHead(400);res.end('Invalid report');return;}
       options.headers={'Content-Type':'application/json','X-Publish-Token':proof};
-      options.body=JSON.stringify({trackId:payload.trackId,content:"The lyrics don't match the audio"});
+      options.body=JSON.stringify({trackId:payload.trackId,content:payload.content});
     }
     const upstream=await fetch('https://lrclib.net'+req.url,options);
     res.writeHead(upstream.status,{'Content-Type':upstream.headers.get('content-type')||'text/plain','Cache-Control':'no-store'});

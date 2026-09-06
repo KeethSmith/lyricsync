@@ -6,7 +6,7 @@ LRCLIB flagging requires a fresh proof-of-work challenge and a single-use `X-Pub
 
 ## Hosting the report relay
 
-The live LRCLIB CORS response currently omits `X-Publish-Token`, preventing a direct cross-origin flag request from GitHub Pages. The site therefore needs `relay.server.mjs` hosted behind HTTPS, with `REPORT_RELAY_URL` in `config.js` set to that public origin. The website itself stays on GitHub Pages.
+The live LRCLIB CORS response currently omits `X-Publish-Token`, preventing a direct cross-origin flag request from GitHub Pages. The site therefore needs `relay.server.mjs` hosted behind HTTPS, with `REPORT_RELAY_URL` in `config.js` set to that public origin. The website itself stays on GitHub Pages. The relay accepts only the fixed reasons `The lyrics don't match the audio` and `The track is not instrumental`.
 
 Run on Node 22 or later: `node relay.server.mjs`. Configure `PORT` for the hosting service and `HOST=0.0.0.0` for a container host. `SITE_ORIGIN` defaults to `https://keethsmith.github.io`. The relay accepts only the two fixed LRCLIB routes, validates report payloads, limits body size and request rate, and never retries a report automatically. Put it behind the host's HTTPS endpoint; enforce additional deployment-wide rate limits when scaling to multiple instances.
 

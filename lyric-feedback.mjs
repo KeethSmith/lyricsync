@@ -38,8 +38,9 @@ export function solveChallenge(challenge){
     worker.postMessage(challenge);
   });
 }
-export async function flagLyrics(trackId,{request=fetch,solve=solveChallenge,relay=REPORT_RELAY_URL}={}){
+export async function flagLyrics(trackId,{request=fetch,solve=solveChallenge,relay=REPORT_RELAY_URL,content="The lyrics don't match the audio"}={}){
   if(!Number.isSafeInteger(trackId)||trackId<=0)throw Error('No LRCLIB entry to report.');
+  if(!["The lyrics don't match the audio",'The track is not instrumental'].includes(content))throw Error('Invalid report reason.');
   if(!relay&&request===fetch)throw Error('Reporting needs the site report relay configured; LRCLIB blocks direct browser flag requests.');
   const origin=relay?relay.replace(/\/$/,''):'https://lrclib.net';
   const challenge=await request(origin+'/api/request-challenge',{method:'POST',signal:AbortSignal.timeout(15000)});
@@ -48,7 +49,7 @@ export async function flagLyrics(trackId,{request=fetch,solve=solveChallenge,rel
   // A publish token is single-use; never retry an uncertain POST automatically.
   const response=await request(origin+'/api/flag',{
     method:'POST',headers:{'Content-Type':'application/json','X-Publish-Token':publishToken},
-    body:JSON.stringify({trackId,content:"The lyrics don't match the audio"}),signal:AbortSignal.timeout(20000)
+    body:JSON.stringify({trackId,content}),signal:AbortSignal.timeout(20000)
   });
   if(!response.ok)throw Error(`LRCLIB did not accept the report (HTTP ${response.status}).`);
 }
