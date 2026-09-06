@@ -30,15 +30,18 @@ button.addEventListener('click', async () => {
     return;
   }
   if (expanded) { exitFallback(); return; }
-  if (panel.requestFullscreen && document.fullscreenEnabled) {
-    try { await panel.requestFullscreen(); return; } catch { /* Use an in-page view if unavailable. */ }
-  }
   panel.classList.add('lyrics-expanded');
   document.body.classList.add('lyrics-fullscreen-open');
   update();
   button.focus();
+  if (panel.requestFullscreen && document.fullscreenEnabled) {
+    try { await panel.requestFullscreen(); return; } catch { /* Use an in-page view if unavailable. */ }
+  }
 });
-document.addEventListener('fullscreenchange', () => { update(); button.focus(); });
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) exitFallback();
+  else { update(); button.focus(); }
+});
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && panel.classList.contains('lyrics-expanded')) exitFallback();
 });
