@@ -34,9 +34,7 @@ button.addEventListener('click', async () => {
   document.body.classList.add('lyrics-fullscreen-open');
   update();
   button.focus();
-  if (panel.requestFullscreen && document.fullscreenEnabled) {
-    try { await panel.requestFullscreen(); return; } catch { /* Use an in-page view if unavailable. */ }
-  }
+
 });
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) exitFallback();
