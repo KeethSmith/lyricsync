@@ -25,3 +25,52 @@ $('demo').onclick=()=>{generation++;clearTimeout(timer);demo=true;playing=true;b
 setInterval(()=>{let pos=track?Math.min(track.duration_ms,base+(playing?performance.now()-sampled:0)):0;if(demo&&pos>=32000){sampled=performance.now();pos=0;}$('position').textContent=fmt(pos);$('bar').style.width=(track?.duration_ms?pos/track.duration_ms*100:0)+'%';if(!lines.length)return;const next=activeLine(lines,pos+Number($('offset').value)*1000);if(next!==selected){selected=next;[...$('lyrics').children].forEach((el,i)=>{el.classList.toggle('active',i===next);el.classList.toggle('past',i<next);if(i===next)el.setAttribute('aria-current','true');else el.removeAttribute('aria-current');});const el=$('lyrics').children[next];if(el&&$('follow').checked)$('lyrics').scrollTo({top:el.offsetTop-$('lyrics').clientHeight/2+el.clientHeight/2,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}},250);
 async function init(){const params=new URLSearchParams(location.search);if(params.has('code')||params.has('error')){history.replaceState({},'',redirect);try{const auth=JSON.parse(sessionStorage.getItem(keys.auth)||'null');sessionStorage.removeItem(keys.auth);if(params.has('error'))throw Error('Spotify connection was cancelled. You can try again.');if(!auth||params.get('state')!==auth.state)throw Error('Login verification failed. Please connect again.');await exchange({grant_type:'authorization_code',code:params.get('code'),redirect_uri:redirect,client_id:localStorage.getItem(keys.client),code_verifier:auth.verifier});}catch(err){status(err.message);return;}}if(token){$('setup').hidden=true;poll();}}
 init();
+
+;(() => {
+const panel = document.getElementById('lyricsPanel');
+const button = document.getElementById('fullscreenLyrics');
+const lyrics = document.getElementById('lyrics');
+let expanded = false;
+
+function update() {
+  expanded = document.fullscreenElement === panel || panel.classList.contains('lyrics-expanded');
+  button.textContent = expanded ? 'Exit fullscreen' : 'Fullscreen';
+  button.setAttribute('aria-pressed', String(expanded));
+  button.setAttribute('aria-label', expanded ? 'Exit lyrics fullscreen' : 'Show lyrics fullscreen');
+  // Recenter after changing the available lyric area, including paused playback.
+  requestAnimationFrame(() => {
+    const active = lyrics.querySelector('.active');
+    if (active && document.getElementById('follow').checked) {
+      lyrics.scrollTop = active.offsetTop - lyrics.clientHeight / 2 + active.clientHeight / 2;
+    }
+  });
+}
+
+function exitFallback() {
+  panel.classList.remove('lyrics-expanded');
+  document.body.classList.remove('lyrics-fullscreen-open');
+  update();
+  button.focus();
+}
+
+button.addEventListener('click', async () => {
+  if (document.fullscreenElement === panel) {
+    try { await document.exitFullscreen(); } catch { /* Browser retains its own exit controls. */ }
+    return;
+  }
+  if (expanded) { exitFallback(); return; }
+  panel.classList.add('lyrics-expanded');
+  document.body.classList.add('lyrics-fullscreen-open');
+  update();
+  button.focus();
+
+});
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) exitFallback();
+  else { update(); button.focus(); }
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && panel.classList.contains('lyrics-expanded')) exitFallback();
+});
+
+})();
