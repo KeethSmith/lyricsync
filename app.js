@@ -7,6 +7,7 @@ import {SPOTIFY_CLIENT_ID} from './config.js?v=2';
 const $=id=>document.getElementById(id), redirect=location.origin+location.pathname.replace(/index\.html$/,'');
 const keys={client:'lyricsync.client',token:'lyricsync.token',auth:'lyricsync.auth'};
 let controlBusy=false, displayedLyrics=null, reportBusy=false;
+let reportProgressTimer=null;
 let token=JSON.parse(sessionStorage.getItem(keys.token)||'null'), track=null, lines=[], wordTimings=[], base=0, sampled=0, playing=false, demo=false, selected=-2, generation=0, timer, busy=false, cooldown=0;
 const status=text=>$('status').textContent=text;
 const random=()=>Array.from(crypto.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join('');
@@ -181,7 +182,10 @@ $('rejectLyrics').onclick=async()=>{
   try{saveRejection(item.id,displayedLyrics);}catch{
     $('feedbackStatus').textContent='Browser storage is unavailable. Could not remember the skipped version; no report sent.';return;
   }
-  reportBusy=true;$('rejectLyrics').disabled=true;
+  reportBusy=true;$('rejectLyrics').disabled=true;$('rejectLyrics').classList.add('reporting');$('rejectLyrics').setAttribute('aria-busy','true');
+  const reportStarted=performance.now(),reportTimeout=160000;
+  const updateReportProgress=()=>{const percent=Math.min(99,Math.floor((performance.now()-reportStarted)/reportTimeout*100));$('rejectLyrics').style.setProperty('--report-progress',percent+'%');$('rejectLyrics').textContent=`Reporting… ${percent}%`;};
+  updateReportProgress();reportProgressTimer=setInterval(updateReportProgress,500);
   $('feedbackStatus').textContent=`Skipped version for ${item.name}. Sending report to LRCLIB…`;
   // Change local selection immediately while proof-of-work runs off the UI thread.
   getLyrics(item,++generation);
@@ -191,7 +195,7 @@ $('rejectLyrics').onclick=async()=>{
   }catch(error){
     $('feedbackStatus').textContent=`Version of ${item.name} stays skipped in this browser. Report not confirmed: ${error.message}`;
   }finally{
-    reportBusy=false;$('rejectLyrics').disabled=demo||!Number.isSafeInteger(displayedLyrics?.id);
+    clearInterval(reportProgressTimer);reportProgressTimer=null;reportBusy=false;$('rejectLyrics').classList.remove('reporting');$('rejectLyrics').removeAttribute('aria-busy');$('rejectLyrics').style.removeProperty('--report-progress');$('rejectLyrics').textContent='Report lyrics';$('rejectLyrics').disabled=demo||!Number.isSafeInteger(displayedLyrics?.id);
   }
 };
 $('resetSkipped').onclick=()=>{

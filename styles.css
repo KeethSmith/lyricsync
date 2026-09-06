@@ -43,6 +43,7 @@
 #wordTimingNote{font-size:10px;text-align:center;color:var(--muted)}
 
 .lyric-feedback{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.lyric-feedback button{font-size:11px;padding:8px 12px}#feedbackStatus{font-size:11px;line-height:1.5;margin:0;max-width:650px;text-align:center;color:var(--muted)}#feedbackStatus:empty{display:none}
+#rejectLyrics.reporting{opacity:1;color:var(--text);background:linear-gradient(90deg,color-mix(in srgb,var(--green) 38%,transparent) 0 var(--report-progress),transparent var(--report-progress) 100%);transition:background .2s linear;font-variant-numeric:tabular-nums}
 .fullscreen-side-controls{display:contents}
 .now #feedbackStatus{text-align:left;margin-top:-14px;margin-bottom:18px}
 #lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{position:relative;padding:7px 128px 7px 24px;gap:3px}
