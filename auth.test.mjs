@@ -12,7 +12,7 @@ function app(clientId='') {
   };
   const store={getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)};
   let destination;
-  const context={SPOTIFY_CLIENT_ID:clientId,document:{getElementById:element,addEventListener(){},querySelectorAll(){return []},documentElement:{dataset:{}}},localStorage:store,sessionStorage:store,location:{origin:'https://keethsmith.github.io',pathname:'/spotify-lyric-visualizer/',search:'',assign:url=>destination=url},URLSearchParams,crypto:webcrypto,TextEncoder,Uint8Array,btoa,performance,setInterval(){}};
+  const context={SPOTIFY_CLIENT_ID:clientId,document:{getElementById:element,addEventListener(){},querySelectorAll(){return []},documentElement:{dataset:{}}},localStorage:store,sessionStorage:store,location:{origin:'https://keethsmith.github.io',pathname:'/lyricsync/',search:'',assign:url=>destination=url},URLSearchParams,crypto:webcrypto,TextEncoder,Uint8Array,btoa,performance,setInterval(){}};
   vm.runInNewContext(readFileSync(new URL('./app.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,''),context);
   return {element,storage,destination:()=>destination};
 }
@@ -23,7 +23,7 @@ test('sign-in routes to official Spotify authorization with PKCE and registered 
   assert.equal(url.origin,'https://accounts.spotify.com');
   assert.equal(url.pathname,'/authorize');
   assert.equal(params.get('client_id'),client);
-  assert.equal(params.get('redirect_uri'),'https://keethsmith.github.io/spotify-lyric-visualizer/');
+  assert.equal(params.get('redirect_uri'),'https://keethsmith.github.io/lyricsync/');
   assert.equal(params.get('response_type'),'code');
   assert.equal(params.get('code_challenge_method'),'S256');
   assert.equal(params.get('scope'),'user-read-currently-playing user-modify-playback-state');

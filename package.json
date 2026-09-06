@@ -9,16 +9,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KeethSmith/spotify-lyric-visualizer.git"
+    "url": "git+https://github.com/KeethSmith/lyricsync.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/KeethSmith/spotify-lyric-visualizer/issues"
+    "url": "https://github.com/KeethSmith/lyricsync/issues"
   },
-  "homepage": "https://github.com/KeethSmith/spotify-lyric-visualizer#readme",
+  "homepage": "https://github.com/KeethSmith/lyricsync#readme",
   "dependencies": {
     "@noble/hashes": "^2.0.1"
   },

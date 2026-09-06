@@ -4,10 +4,10 @@ A static Spotify lyric visualizer hosted on GitHub Pages. Uses Spotify Authoriza
 
 ## Use
 
-Open https://keethsmith.github.io/spotify-lyric-visualizer/ and choose Explore a demo, or connect your Spotify app.
+Open https://keethsmith.github.io/lyricsync/ and choose Explore a demo, or connect your Spotify app.
 
 1. Create an app at https://developer.spotify.com/dashboard with Web API enabled.
-2. Register the exact redirect URI `https://keethsmith.github.io/spotify-lyric-visualizer/`.
+2. Register the exact redirect URI `https://keethsmith.github.io/lyricsync/`.
 3. Set `SPOTIFY_CLIENT_ID` in `config.js` to your public Client ID and push to deploy. Visitors can then click **Sign in with Spotify**, complete sign-in at `https://accounts.spotify.com/authorize`, and return to the site. Never put a client secret in this file. For personal use, a Client ID can also be entered under App configuration on the site.
 4. Play a song in Spotify. The page polls every five seconds and updates lyric position locally every 250 ms.
 
