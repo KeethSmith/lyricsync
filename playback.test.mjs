@@ -7,6 +7,12 @@ test('control requests use Spotify methods and bounded millisecond seek',()=>{
   assert.match(playbackRequest('previous').url,/\/previous$/);
   assert.match(playbackRequest('seek',-1).url,/position_ms=0$/);
   assert.match(playbackRequest('seek',1250.6).url,/position_ms=1251$/);
+  assert.equal(new URL(playbackRequest('pause',0,'tesla-device').url).searchParams.get('device_id'),'tesla-device');
+});
+test('commands explicitly target the active Spotify Connect device',async()=>{
+  let requested;
+  await sendPlayback('pause',0,'test',async url=>{requested=new URL(url);return {ok:true,status:204};},'tesla-device');
+  assert.equal(requested.searchParams.get('device_id'),'tesla-device');
 });
 test('a command is sent once and empty success responses are accepted',async()=>{
   let calls=0;

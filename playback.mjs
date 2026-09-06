@@ -1,11 +1,13 @@
 export const PLAYBACK_SCOPE = 'user-modify-playback-state';
-export function playbackRequest(action, position = 0) {
+export function playbackRequest(action, position = 0, deviceId = '') {
   const routes = {play:['PUT','play'],pause:['PUT','pause'],previous:['POST','previous'],next:['POST','next'],seek:['PUT',`seek?position_ms=${Math.max(0,Math.round(position))}`]};
   if (!routes[action]) throw Error('Unknown playback control.');
-  return {method:routes[action][0],url:'https://api.spotify.com/v1/me/player/'+routes[action][1]};
+  const url=new URL('https://api.spotify.com/v1/me/player/'+routes[action][1]);
+  if(deviceId)url.searchParams.set('device_id',deviceId);
+  return {method:routes[action][0],url:url.href};
 }
-export async function sendPlayback(action, position, accessToken, request = fetch) {
-  const {method,url} = playbackRequest(action,position);
+export async function sendPlayback(action, position, accessToken, request = fetch, deviceId = '') {
+  const {method,url} = playbackRequest(action,position,deviceId);
   const response = await request(url,{method,headers:{Authorization:`Bearer ${accessToken}`}});
   if (response.ok) return;
   if (response.status === 401) throw Error('Your session expired. Sign in again to control playback.');
