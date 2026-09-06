@@ -36,3 +36,8 @@
 /* One seek bar in each view: the player normally, the lyrics footer when expanded. */
 .lyrics-footer .playback-controls{display:none}
 #lyricsPanel.lyrics-expanded .lyrics-footer .playback-controls,#lyricsPanel:fullscreen .lyrics-footer .playback-controls{display:block}
+/* Highlight words as their estimated start times pass, retaining readable upcoming words. */
+.line.active .lyric-word{color:var(--muted)}
+.line.active .lyric-word.word-sung{color:var(--green)}
+.line.active .lyric-word.word-current{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.18em}
+#wordTimingNote{font-size:10px;text-align:center;color:var(--muted)}
