@@ -43,16 +43,17 @@
 #wordTimingNote{font-size:10px;text-align:center;color:var(--muted)}
 
 .lyric-feedback{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.lyric-feedback button{font-size:11px;padding:8px 12px}#feedbackStatus{font-size:11px;line-height:1.5;margin:0;max-width:650px;text-align:center;color:var(--muted)}#feedbackStatus:empty{display:none}
-#rejectLyrics.reporting{opacity:1;color:var(--text);background:linear-gradient(90deg,color-mix(in srgb,var(--green) 38%,transparent) 0 var(--report-progress),transparent var(--report-progress) 100%);transition:background .2s linear;font-variant-numeric:tabular-nums}
 .fullscreen-side-controls{display:contents}
-.now #feedbackStatus{text-align:left;margin-top:-14px;margin-bottom:18px}
-#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{position:relative;padding:7px 128px 7px 24px;gap:3px}
-#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{position:absolute;right:18px;top:50%;transform:translateY(-50%);justify-content:flex-end;gap:8px;flex-wrap:nowrap;font-size:9px}
+#lyricsPanel:fullscreen,#lyricsPanel.lyrics-expanded{position:fixed}
+#lyricsPanel:fullscreen #lyrics,#lyricsPanel.lyrics-expanded #lyrics{padding-right:clamp(155px,18vw,240px)}
+#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{padding:7px 24px;gap:3px}
+#lyricsPanel:fullscreen .fullscreen-side-controls,#lyricsPanel.lyrics-expanded .fullscreen-side-controls{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:3;width:132px;display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:10px;background:color-mix(in srgb,var(--panel) 90%,transparent);border:1px solid #30372c;border-radius:14px}
+#lyricsPanel:fullscreen .lyric-feedback,#lyricsPanel.lyrics-expanded .lyric-feedback{flex-direction:column;flex-wrap:nowrap;gap:7px}
+#lyricsPanel:fullscreen .lyric-feedback button,#lyricsPanel.lyrics-expanded .lyric-feedback button,#lyricsPanel:fullscreen #controlReconnect,#lyricsPanel.lyrics-expanded #controlReconnect{width:100%;padding:7px 8px;font-size:9px;line-height:1.25}
+#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{justify-content:center;gap:7px;flex-direction:column;font-size:9px}
 #lyricsPanel:fullscreen .lyrics-footer-options [data-theme-toggle],#lyricsPanel.lyrics-expanded .lyrics-footer-options [data-theme-toggle]{width:34px;height:34px;min-width:34px;flex-basis:34px}
-@media(max-width:560px){#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{padding-left:12px;padding-right:105px}#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{right:8px;gap:5px;flex-direction:column}}
-.viewer-options{display:flex;align-items:center;gap:7px;margin-top:14px}.lyrics-footer-options{display:none}
-#lyricsPanel:not(:fullscreen):not(.lyrics-expanded)>.lyrics-footer{display:none}
-#lyricsPanel:fullscreen>.lyrics-footer,#lyricsPanel.lyrics-expanded>.lyrics-footer{display:flex}
-#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{display:flex}
-@media(min-width:761px){.now,.words{height:clamp(642px,68vh,720px);align-self:start}.now{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#4c573f transparent}.words>#lyrics{height:auto;min-height:0;flex:1}}
-@media(max-width:760px){.words>#lyrics{height:440px;min-height:0;flex:none}}
+#lyricsPanel:fullscreen #feedbackStatus,#lyricsPanel.lyrics-expanded #feedbackStatus{font-size:9px;line-height:1.35;text-align:left}
+#lyricsPanel:fullscreen #wordTimingNote,#lyricsPanel.lyrics-expanded #wordTimingNote{text-align:center;font-size:9px}
+@media(max-width:560px){#lyricsPanel:fullscreen #lyrics,#lyricsPanel.lyrics-expanded #lyrics{padding-left:16px;padding-right:128px}#lyricsPanel:fullscreen .fullscreen-side-controls,#lyricsPanel.lyrics-expanded .fullscreen-side-controls{right:8px;width:112px;padding:8px}}
+
+#rejectLyrics.reporting{opacity:1;color:var(--text);background:linear-gradient(90deg,color-mix(in srgb,var(--green) 38%,transparent) 0 var(--report-progress),transparent var(--report-progress) 100%);transition:background .2s linear;font-variant-numeric:tabular-nums}
