@@ -12,7 +12,7 @@ function app(clientId='') {
   };
   const store={getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)};
   let destination;
-  const context={SPOTIFY_CLIENT_ID:clientId,document:{getElementById:element},localStorage:store,sessionStorage:store,location:{origin:'https://keethsmith.github.io',pathname:'/spotify-lyric-visualizer/',search:'',assign:url=>destination=url},URLSearchParams,crypto:webcrypto,TextEncoder,Uint8Array,btoa,performance,setInterval(){}};
+  const context={SPOTIFY_CLIENT_ID:clientId,document:{getElementById:element,addEventListener(){}},localStorage:store,sessionStorage:store,location:{origin:'https://keethsmith.github.io',pathname:'/spotify-lyric-visualizer/',search:'',assign:url=>destination=url},URLSearchParams,crypto:webcrypto,TextEncoder,Uint8Array,btoa,performance,setInterval(){}};
   vm.runInNewContext(readFileSync(new URL('./app.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,''),context);
   return {element,storage,destination:()=>destination};
 }
