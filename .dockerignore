@@ -1,0 +1,7 @@
+.git
+.github
+node_modules
+*.test.mjs
+flag-worker.source.mjs
+README.md
+REPORTING.md

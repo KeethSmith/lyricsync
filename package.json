@@ -1,0 +1,28 @@
+{
+  "name": "lyricsync",
+  "version": "1.0.0",
+  "description": "A static Spotify lyric visualizer hosted on GitHub Pages. Uses Spotify Authorization Code with PKCE and LRCLIB timed lyrics. No backend or client secret.",
+  "main": "app.js",
+  "scripts": {
+    "test": "node --test *.test.mjs",
+    "build:worker": "esbuild flag-worker.source.mjs --bundle --minify --outfile=flag-worker.js --format=iife --platform=browser --legal-comments=linked"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KeethSmith/spotify-lyric-visualizer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/KeethSmith/spotify-lyric-visualizer/issues"
+  },
+  "homepage": "https://github.com/KeethSmith/spotify-lyric-visualizer#readme",
+  "dependencies": {
+    "@noble/hashes": "^2.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10"
+  }
+}

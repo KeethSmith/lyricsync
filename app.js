@@ -1,11 +1,12 @@
+import {rejectedVersions,saveRejection,resetRejections,flagLyrics} from './lyric-feedback.mjs';
 import {currentWord} from './word-timing.mjs?v=actual-1';
-import {lookupLyrics} from './lyric-lookup.mjs';
+import {lookupLyrics} from './lyric-lookup.mjs?v=reject-1';
 import {PLAYBACK_SCOPE, sendPlayback} from './playback.mjs';
 import {parseLrc,activeLine} from './lyrics.mjs?v=actual-1';
 import {SPOTIFY_CLIENT_ID} from './config.js?v=2';
 const $=id=>document.getElementById(id), redirect=location.origin+location.pathname.replace(/index\.html$/,'');
 const keys={client:'lyricsync.client',token:'lyricsync.token',auth:'lyricsync.auth'};
-let controlBusy=false;
+let controlBusy=false, displayedLyrics=null, reportBusy=false;
 let token=JSON.parse(sessionStorage.getItem(keys.token)||'null'), track=null, lines=[], wordTimings=[], base=0, sampled=0, playing=false, demo=false, selected=-2, generation=0, timer, busy=false, cooldown=0;
 const status=text=>$('status').textContent=text;
 const random=()=>Array.from(crypto.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join('');
@@ -15,7 +16,7 @@ $('clientId').value=SPOTIFY_CLIENT_ID||localStorage.getItem(keys.client)||'';
 async function exchange(params){const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(params)});if(!res.ok)throw Error('Spotify login expired or could not be completed. Please connect again.');const data=await res.json();token={...data,refresh_token:data.refresh_token||token?.refresh_token,expires:Date.now()+data.expires_in*1000};sessionStorage.setItem(keys.token,JSON.stringify(token));}
 $('connectForm').addEventListener('submit',async e=>{e.preventDefault();try{const client=$('clientId').value.trim();if(!/^[a-f\d]{32}$/i.test(client)){$('appSettings').open=true;$('clientId').focus();throw Error('Spotify sign-in needs the site owner to configure a Spotify app Client ID. You can explore the demo in the meantime.');}localStorage.setItem(keys.client,client);const verifier=random(),state=random();sessionStorage.setItem(keys.auth,JSON.stringify({verifier,state}));const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));const challenge=btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');location.assign('https://accounts.spotify.com/authorize?'+new URLSearchParams({client_id:client,response_type:'code',redirect_uri:redirect,scope:'user-read-currently-playing user-modify-playback-state',code_challenge_method:'S256',code_challenge:challenge,state}));}catch(err){status(err.message);}});
 async function spotify(){if(!token)throw Error('Connect Spotify to see your current song.');if(Date.now()>token.expires-30000)await exchange({grant_type:'refresh_token',refresh_token:token.refresh_token,client_id:localStorage.getItem(keys.client)});const res=await fetch('https://api.spotify.com/v1/me/player/currently-playing',{headers:{Authorization:`Bearer ${token.access_token}`}});if(res.status===204)return null;if(res.status===429){cooldown=Date.now()+Math.max(5,Number(res.headers.get('Retry-After'))||30)*1000;throw Error('Spotify is busy. Waiting before checking again.');}if(res.status===401){token=null;sessionStorage.removeItem(keys.token);$('setup').hidden=false;throw Error('Your Spotify session expired. Connect again.');}if(res.status===403)throw Error('Spotify denied access. Check that this account is allowed in your developer app.');if(!res.ok)throw Error('Spotify is temporarily unavailable. We will try again.');return res.json();}
-function empty(title,body){$('wordTimingNote').hidden=true;$('lyrics').replaceChildren();const box=document.createElement('div');box.className='empty';const h=document.createElement('h2'),p=document.createElement('p');h.textContent=title;p.textContent=body;box.append(h,p);$('lyrics').append(box);}
+function empty(title,body){displayedLyrics=null;$('rejectLyrics').disabled=true;$('wordTimingNote').hidden=true;$('lyrics').replaceChildren();const box=document.createElement('div');box.className='empty';const h=document.createElement('h2'),p=document.createElement('p');h.textContent=title;p.textContent=body;box.append(h,p);$('lyrics').append(box);}
 function renderLyrics(){
   selected=-2;
   wordTimings=lines.map(line=>line.words||[]);
@@ -38,7 +39,7 @@ function highlightWords(index,position){
   }
 }
 function setTrack(item){track=item;$('title').textContent=item.name;$('artist').textContent=item.artists.map(a=>a.name).join(', ');const art=item.album?.images?.[0]?.url;$('art').hidden=!art;$('artPlaceholder').hidden=!!art;if(art)$('art').src=art;else $('art').removeAttribute('src');const url=item.external_urls?.spotify;$('trackLink').hidden=!url;if(url)$('trackLink').href=url;}
-async function getLyrics(item,version){lines=[];empty('Finding the words…','Looking for lyrics for this recording.');try{const data=await lookupLyrics(item);if(version!==generation)return;if(!data){empty('No lyrics for this recording yet.','Try another song. Some tracks do not have lyrics on LRCLIB.');return;}if(data.instrumental){empty('Let the music speak.','This track is marked as instrumental.');return;}lines=parseLrc(data.syncedLyrics||'');if(lines.length){$('lyricSource').textContent='SYNCED · LRCLIB';renderLyrics();}else if(data.plainLyrics){$('lyricSource').textContent='UNSYNCED · LRCLIB';$('lyrics').replaceChildren(...data.plainLyrics.split('\n').map(text=>{const p=document.createElement('p');p.className='line';p.textContent=text||' ';return p;}));}else empty('No lyrics available.','LRCLIB has no lyrics for this recording.');}catch(err){if(version===generation)empty('Could not load lyrics.',err.message);}}
+async function getLyrics(item,version){lines=[];empty('Finding the words…','Looking for lyrics for this recording.');try{const data=await lookupLyrics(item,fetch,rejectedVersions(item.id));if(version!==generation)return;if(!data){empty('No more matching lyrics.','No usable versions remain for this recording. You can reset skipped versions to try them again.');return;}displayedLyrics=data;$('rejectLyrics').disabled=reportBusy||!Number.isSafeInteger(data.id);if(data.instrumental){empty('Let the music speak.','This track is marked as instrumental.');return;}lines=parseLrc(data.syncedLyrics||'');if(lines.length){$('lyricSource').textContent='SYNCED · LRCLIB';renderLyrics();}else if(data.plainLyrics){$('lyricSource').textContent='UNSYNCED · LRCLIB';$('lyrics').replaceChildren(...data.plainLyrics.split('\n').map(text=>{const p=document.createElement('p');p.className='line';p.textContent=text||' ';return p;}));}else empty('No lyrics available.','LRCLIB has no lyrics for this recording.');}catch(err){if(version===generation)empty('Could not load lyrics.',err.message);}}
 async function poll(force=false){clearTimeout(timer);if(busy||controlBusy||demo||!token)return;if(Date.now()<cooldown){timer=setTimeout(()=>poll(),cooldown-Date.now());return;}busy=true;const version=generation;try{const data=await spotify();if(version!==generation||demo)return;if(!data?.item||data.item.type!=='track'){playing=false;track=null;lines=[];generation++;$('mode').textContent='WAITING FOR SPOTIFY';$('title').textContent='Nothing playing';$('artist').textContent='Start a song in Spotify';$('trackLink').hidden=true;$('art').hidden=true;$('artPlaceholder').hidden=false;empty('Waiting for your music.','Start a song in Spotify on any active device.');status('No active song. Open Spotify and press play.');return;}base=data.progress_ms||0;sampled=performance.now();playing=data.is_playing;$('mode').textContent=playing?'NOW PLAYING':'PAUSED';status(playing?'Connected · Following your Spotify playback':'Connected · Playback paused');if(track?.id!==data.item.id||force){setTrack(data.item);getLyrics(data.item,++generation);}}catch(err){playing=false;status(err.message);}finally{busy=false;if(token&&!demo)timer=setTimeout(()=>poll(),Math.max(5000,cooldown-Date.now()));}}
 function reset(){generation++;clearTimeout(timer);token=null;sessionStorage.removeItem(keys.token);demo=false;playing=false;track=null;lines=[];base=0;setTrack({name:'Your next favorite moment',artists:[{name:'Start a song in Spotify'}],duration_ms:0});track=null;$('setup').hidden=false;$('mode').textContent='NOW PLAYING';$('lyricSource').textContent='LRCLIB';empty('Every song has a story.','Connect Spotify to follow along.');status('Disconnected.');}
 $('disconnect').onclick=reset;
@@ -175,3 +176,29 @@ for(const button of document.querySelectorAll('[data-theme-toggle]'))button.addE
   const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
   applyTheme(theme);try{localStorage.setItem('lyricsync.theme',theme);}catch{}
 });
+
+$('rejectLyrics').onclick=async()=>{
+  if(reportBusy||demo||!track?.id||!Number.isSafeInteger(displayedLyrics?.id))return;
+  const item=track,entryId=displayedLyrics.id;
+  try{saveRejection(item.id,entryId);}catch{
+    $('feedbackStatus').textContent='Browser storage is unavailable. Could not remember the skipped version; no report sent.';return;
+  }
+  reportBusy=true;$('rejectLyrics').disabled=true;
+  $('feedbackStatus').textContent=`Skipped version for ${item.name}. Sending report to LRCLIB…`;
+  // Change local selection immediately while proof-of-work runs off the UI thread.
+  getLyrics(item,++generation);
+  try{
+    await flagLyrics(entryId);
+    $('feedbackStatus').textContent=`Reported the skipped version of ${item.name} to LRCLIB. It will stay excluded in this browser.`;
+  }catch(error){
+    $('feedbackStatus').textContent=`Version of ${item.name} stays skipped in this browser. Report not confirmed: ${error.message}`;
+  }finally{
+    reportBusy=false;$('rejectLyrics').disabled=demo||!Number.isSafeInteger(displayedLyrics?.id);
+  }
+};
+$('resetSkipped').onclick=()=>{
+  if(!track?.id||demo)return;
+  try{resetRejections(track.id);}catch{$('feedbackStatus').textContent='Could not reset browser preferences.';return;}
+  $('feedbackStatus').textContent='Skipped versions reset for this song. Reports already sent to LRCLIB are not withdrawn.';
+  getLyrics(track,++generation);
+};
