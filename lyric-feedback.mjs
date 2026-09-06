@@ -1,4 +1,4 @@
-import {REPORT_RELAY_URL} from './config.js?v=report-1';
+import {REPORT_RELAY_URL} from './config.js?v=report-2';
 const storageKey='lyricsync.rejected.v1';
 export function rejectedVersions(spotifyId,storage=localStorage){
   try{const data=JSON.parse(storage.getItem(storageKey)||'{}');const ids=data[spotifyId];return Array.isArray(ids)?ids.filter(Number.isSafeInteger):[];}catch{return [];}
