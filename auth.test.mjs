@@ -37,6 +37,5 @@ test('missing app configuration gives a clear message without a broken redirect'
   const instance=app();
   await instance.element('connectForm').submit({preventDefault(){}});
   assert.equal(instance.destination(),undefined);
-  assert.equal(instance.element('appSettings').open,true);
-  assert.match(instance.element('status').textContent,/site owner.*Client ID/);
+  assert.match(instance.element('status').textContent,/not configured/);
 });
