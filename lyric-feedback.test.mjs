@@ -10,11 +10,11 @@ test('rejections persist, deduplicate, and reset for only one Spotify song',()=>
 });
 test('flag uses selected LRCLIB id, fresh proof token, exact report body and one POST',async()=>{
   const calls=[];
-  await flagLyrics(123,{solve:async challenge=>{assert.equal(challenge.prefix,'test');return 'test:solved';},request:async(url,options)=>{
+  await flagLyrics(123,{relay:'https://relay.example',solve:async challenge=>{assert.equal(challenge.prefix,'test');return 'test:solved';},request:async(url,options)=>{
     calls.push({url,options});return {ok:true,json:async()=>({prefix:'test',target:'f'.repeat(64)})};
   }});
-  assert.equal(calls.length,2);assert.equal(calls[0].url,'https://lrclib.net/api/request-challenge');
-  assert.equal(calls[1].url,'https://lrclib.net/api/flag');assert.equal(calls[1].options.method,'POST');
+  assert.equal(calls.length,2);assert.equal(calls[0].url,'https://relay.example/api/request-challenge');
+  assert.equal(calls[1].url,'https://relay.example/api/flag');assert.equal(calls[1].options.method,'POST');
   assert.equal(calls[1].options.headers['X-Publish-Token'],'test:solved');
   assert.deepEqual(JSON.parse(calls[1].options.body),{trackId:123,content:"The lyrics don't match the audio"});
 });
