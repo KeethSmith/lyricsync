@@ -18,3 +18,9 @@ Client ID is saved locally; access and refresh tokens are stored only in tab-sco
 ## Development
 
 Serve this directory over HTTP, for example `python -m http.server 8080 --bind 127.0.0.1`, and register `http://127.0.0.1:8080/` as another Spotify redirect URI. Run `node --test lyrics.test.mjs` for timing tests. GitHub Pages serves the root of `main` automatically after a push.
+
+## Playback and appearance
+Previous, play/pause, next, and seeking are available in normal and lyrics fullscreen views. Playback controls require Spotify Premium, an active Spotify device, and the user-modify-playback-state permission. Existing users must sign in again to grant this permission. Failed commands are never automatically replayed. Demo mode supports pause and seeking without changing real playback.
+
+Dark mode is the default. The theme toggle is available in both views and remembers the selected appearance in this browser.
+

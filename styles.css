@@ -12,3 +12,12 @@
 #lyricsPanel:fullscreen .line.active,#lyricsPanel.lyrics-expanded .line.active{font-size:clamp(40px,5.5vw,88px);line-height:1.35}
 #lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{flex-shrink:0;justify-content:center}
 @media(max-width:760px){.lyrics-tools{gap:10px}.lyrics-heading .eyebrow{font-size:9px;letter-spacing:1px}}
+.header-tools,.lyrics-footer-options{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.playback-controls{width:100%;margin-top:20px}.transport{display:flex;justify-content:center;gap:12px}.transport button{min-width:48px;font-size:20px;padding:9px 14px}.transport .play-toggle{background:var(--green);color:var(--bg);border-color:var(--green);min-width:60px}.control-times{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}.playback-controls .seek{margin:12px 0 4px}.words>.lyrics-footer{display:flex;flex-direction:column;gap:10px;padding:12px 28px}.lyrics-footer .playback-controls{max-width:600px;margin:0}.lyrics-footer-options{justify-content:center;font-size:11px}.lyrics-footer-options button{font-size:11px;padding:7px 12px}#controlStatus{margin:0;color:var(--muted);font-size:12px;max-width:650px;text-align:center}#controlStatus:empty{display:none}button:disabled,input:disabled{opacity:.45;cursor:not-allowed}
+:root[data-theme=light]{color-scheme:light;--bg:#f3f5ef;--panel:#fff;--text:#172219;--muted:#55644f;--green:#316817}
+[data-theme=light] body{background:radial-gradient(ellipse at 85% 0%,#dce9cf66,transparent 48%),var(--bg)}
+[data-theme=light] .panel,[data-theme=light] header,[data-theme=light] .lyrics-heading,[data-theme=light] .words>footer{border-color:#d3ddcc}
+[data-theme=light] button{border-color:#b7c5ad}[data-theme=light] button:hover{background:#e5eddc}
+[data-theme=light] input:not([type=range]):not([type=checkbox]),[data-theme=light] code{background:#f1f5eb;border-color:#c3d0b9}
+[data-theme=light] .line{color:#64715c}[data-theme=light] .line.past{color:#526447}[data-theme=light] .line.active{color:var(--green)}
+[data-theme=light] .progress{background:#dae3d1}[data-theme=light] .transport .play-toggle{background:var(--green);color:#fff}[data-theme=light] .spotify-sign-in{background:#1db954;color:#081b0f}
+@media(max-width:760px){.header-tools{gap:6px}.header-tools button{padding:9px;font-size:12px}.brand{font-size:18px}.words>.lyrics-footer{padding:12px 18px}.lyrics-footer .transport button{font-size:18px}.lyrics-heading{padding:12px 18px}}
