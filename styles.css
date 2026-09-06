@@ -44,11 +44,12 @@
 
 .lyric-feedback{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.lyric-feedback button{font-size:11px;padding:8px 12px}#feedbackStatus{font-size:11px;line-height:1.5;margin:0;max-width:650px;text-align:center;color:var(--muted)}#feedbackStatus:empty{display:none}
 .fullscreen-side-controls{display:contents}
-#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{position:relative;padding:7px 150px 7px 24px;gap:3px}
-#lyricsPanel:fullscreen .lyric-feedback,#lyricsPanel.lyrics-expanded .lyric-feedback,#lyricsPanel:fullscreen #feedbackStatus,#lyricsPanel.lyrics-expanded #feedbackStatus,#lyricsPanel:fullscreen #wordTimingNote,#lyricsPanel.lyrics-expanded #wordTimingNote{display:none}
+#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{position:relative;padding:7px 150px;gap:3px}
+#lyricsPanel:fullscreen #feedbackStatus,#lyricsPanel.lyrics-expanded #feedbackStatus,#lyricsPanel:fullscreen #wordTimingNote,#lyricsPanel.lyrics-expanded #wordTimingNote{display:none}
+#lyricsPanel:fullscreen .lyric-feedback,#lyricsPanel.lyrics-expanded .lyric-feedback{display:flex;position:absolute;left:18px;top:50%;transform:translateY(-50%);justify-content:flex-start;flex-wrap:nowrap}
 #lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{position:absolute;right:18px;top:50%;transform:translateY(-50%);justify-content:flex-end;gap:8px;flex-wrap:nowrap;font-size:9px}
 #lyricsPanel:fullscreen .lyrics-footer-options [data-theme-toggle],#lyricsPanel.lyrics-expanded .lyrics-footer-options [data-theme-toggle]{width:34px;height:34px;min-width:34px;flex-basis:34px}
-@media(max-width:560px){#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{padding-left:12px;padding-right:105px}#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{right:8px;gap:5px;flex-direction:column}}
+@media(max-width:560px){#lyricsPanel:fullscreen>footer,#lyricsPanel.lyrics-expanded>footer{padding-left:120px;padding-right:105px}#lyricsPanel:fullscreen .lyric-feedback,#lyricsPanel.lyrics-expanded .lyric-feedback{left:8px}#lyricsPanel:fullscreen .lyric-feedback button,#lyricsPanel.lyrics-expanded .lyric-feedback button{padding:7px 9px}#lyricsPanel:fullscreen .lyrics-footer-options,#lyricsPanel.lyrics-expanded .lyrics-footer-options{right:8px;gap:5px;flex-direction:column}}
 
 #rejectLyrics.reporting{opacity:1;color:var(--text);background:linear-gradient(90deg,color-mix(in srgb,var(--green) 38%,transparent) 0 var(--report-progress),transparent var(--report-progress) 100%);transition:background .2s linear;font-variant-numeric:tabular-nums}
 .empty .instrumental-report{margin-top:8px;padding:9px 14px;font-size:11px;color:var(--green)}
