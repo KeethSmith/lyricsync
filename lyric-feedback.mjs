@@ -1,13 +1,26 @@
 import {REPORT_RELAY_URL} from './config.js?v=report-2';
+import {lyricFingerprint} from './lyric-content.mjs';
 const storageKey='lyricsync.rejected.v1';
+const storedRecord=(spotifyId,storage)=>{
+  try{
+    const value=JSON.parse(storage.getItem(storageKey)||'{}')[spotifyId];
+    if(Array.isArray(value))return {ids:value.filter(Number.isSafeInteger),lyrics:[]};
+    return {ids:Array.isArray(value?.ids)?value.ids.filter(Number.isSafeInteger):[],lyrics:Array.isArray(value?.lyrics)?value.lyrics.filter(text=>typeof text==='string'&&text):[]};
+  }catch{return {ids:[],lyrics:[]};}
+};
 export function rejectedVersions(spotifyId,storage=localStorage){
-  try{const data=JSON.parse(storage.getItem(storageKey)||'{}');const ids=data[spotifyId];return Array.isArray(ids)?ids.filter(Number.isSafeInteger):[];}catch{return [];}
+  return storedRecord(spotifyId,storage).ids;
 }
-export function saveRejection(spotifyId,lrclibId,storage=localStorage){
+export function rejectedLyrics(spotifyId,storage=localStorage){
+  return storedRecord(spotifyId,storage).lyrics;
+}
+export function saveRejection(spotifyId,entry,storage=localStorage){
+  const lrclibId=typeof entry==='number'?entry:entry?.id;
   if(!spotifyId||!Number.isSafeInteger(lrclibId))throw Error('No lyric version selected.');
   let data;try{data=JSON.parse(storage.getItem(storageKey)||'{}');}catch{data={};}
   if(!data||typeof data!=='object'||Array.isArray(data))data={};
-  data[spotifyId]=[...new Set([...rejectedVersions(spotifyId,storage),lrclibId])];
+  const previous=storedRecord(spotifyId,storage),fingerprint=lyricFingerprint(entry);
+  data[spotifyId]={ids:[...new Set([...previous.ids,lrclibId])],lyrics:[...new Set([...previous.lyrics,...(fingerprint?[fingerprint]:[])])]};
   storage.setItem(storageKey,JSON.stringify(data));
 }
 export function resetRejections(spotifyId,storage=localStorage){
