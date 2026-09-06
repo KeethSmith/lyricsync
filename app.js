@@ -1,6 +1,6 @@
 import {rejectedVersions,saveRejection,resetRejections,flagLyrics} from './lyric-feedback.mjs';
 import {currentWord} from './word-timing.mjs?v=actual-1';
-import {lookupLyrics} from './lyric-lookup.mjs?v=reject-1';
+import {lookupLyrics} from './lyric-lookup.mjs?v=reject-2';
 import {PLAYBACK_SCOPE, sendPlayback} from './playback.mjs';
 import {parseLrc,activeLine} from './lyrics.mjs?v=actual-1';
 import {SPOTIFY_CLIENT_ID} from './config.js?v=2';

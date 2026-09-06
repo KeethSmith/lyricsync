@@ -9,8 +9,16 @@ test('rejects different recording, wrong artist and incorrect duration',()=>{
 });
 test('untimed exact entry falls back to timed search result',async()=>{
   let calls=0;
-  const result=await lookupLyrics(item,async()=>({ok:true,json:async()=>++calls===1?{plainLyrics:'First\nSecond'}:[timed]}));
-  assert.equal(result,timed);assert.equal(calls,2);
+  const result=await lookupLyrics(item,async url=>({ok:true,json:async()=>++calls===1?{plainLyrics:'First\nSecond'}:url.includes('q=')?[]:[timed]}));
+  assert.equal(result,timed);assert.equal(calls,3);
+});
+test('rejected exact version falls back to full Spotify artist credit despite bad LRCLIB album metadata',async()=>{
+  const song={name:"Wouldn't You Like",artists:[{name:'Jorge Rivera-Herrans'},{name:'TROY'},{name:'Cast of EPIC: The Musical'}],album:{name:'EPIC: The Circe Saga (Official Concept Album)'},duration_ms:174000};
+  const bad={id:25947506,trackName:song.name,artistName:'Jorge Rivera-Herrans & TROY & Cast of EPIC: The Musical',albumName:'Epic the Musical All Songs in Order Cegli Songs 1',duration:174.106122,syncedLyrics:'[00:01]First\n[00:04]Second'};
+  const adjacentBad={...bad,id:9187430,artistName:'Jorge Rivera-Herrans',albumName:song.album.name,duration:174.04};
+  const good={...bad,id:15179686,artistName:'Jorge Rivera-Herrans, TROY, & Cast of EPIC: The Musical',albumName:'Jorge Rivera-Herrans',duration:174};
+  const result=await lookupLyrics(song,async url=>({ok:true,json:async()=>url.includes('/get?')?adjacentBad:url.includes('q=')?[good,bad]:[]}),[bad.id]);
+  assert.equal(result.id,good.id);
 });
 test('search failure preserves plain lyrics',async()=>{
   let calls=0;const plain={plainLyrics:'Untimed words'};
