@@ -1,6 +1,6 @@
 import {rejectedVersions,rejectedLyrics,saveRejection,resetRejections,flagLyrics} from './lyric-feedback.mjs?v=duplicate-1';
 import {currentWord} from './word-timing.mjs?v=actual-1';
-import {lookupLyrics} from './lyric-lookup.mjs?v=reject-2';
+import {lookupLyrics} from './lyric-lookup.mjs?v=recording-language-1';
 import {PLAYBACK_SCOPE, sendPlayback} from './playback.mjs';
 import {parseLrc,activeLine} from './lyrics.mjs?v=actual-1';
 import {romanizeKorean} from './korean-romanization.mjs?v=1';
