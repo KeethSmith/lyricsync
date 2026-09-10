@@ -14,7 +14,7 @@ const lyricsFullscreen=()=>document.fullscreenElement===$('lyricsPanel')||$('lyr
 const setReportIdleLabel=()=>{reportButton.textContent=lyricsFullscreen()?'Report Lyrics':displayedLyrics?.instrumental?'Is this an error?':'Wrong lyrics — report & try another';};
 let token=JSON.parse(sessionStorage.getItem(keys.token)||'null'), track=null, activeDevice=null, lines=[], wordTimings=[], base=0, sampled=0, playing=false, demo=false, selected=-2, generation=0, timer, busy=false, cooldown=0;
 const status=text=>$('status').textContent=text;
-const displayLyrics=async text=>globalThis.JapaneseRomanization.romanizeJapanese(romanizeKorean(text));
+const displayLyrics=async text=>romanizeKorean(await globalThis.JapaneseRomanization.romanizeJapanese(text));
 const random=()=>Array.from(crypto.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join('');
 const fmt=ms=>`${Math.floor(ms/60000)}:${String(Math.floor(ms/1000)%60).padStart(2,'0')}`;
 async function exchange(params){const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(params)});if(!res.ok)throw Error('Spotify login expired or could not be completed. Please connect again.');const data=await res.json();token={...data,refresh_token:data.refresh_token||token?.refresh_token,expires:Date.now()+data.expires_in*1000};sessionStorage.setItem(keys.token,JSON.stringify(token));}
