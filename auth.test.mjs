@@ -26,7 +26,7 @@ test('sign-in routes to official Spotify authorization with PKCE and registered 
   assert.equal(params.get('redirect_uri'),'https://keethsmith.github.io/lyricsync/');
   assert.equal(params.get('response_type'),'code');
   assert.equal(params.get('code_challenge_method'),'S256');
-  assert.equal(params.get('scope'),'user-read-currently-playing user-read-playback-state user-modify-playback-state');
+  assert.equal(params.get('scope'),'user-read-private user-read-currently-playing user-read-playback-state user-modify-playback-state');
   const auth=JSON.parse(instance.storage.get('lyricsync.auth'));
   assert.equal(params.get('state'),auth.state);
   const digest=await webcrypto.subtle.digest('SHA-256',new TextEncoder().encode(auth.verifier));
