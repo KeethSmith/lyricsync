@@ -5,11 +5,11 @@ import {readFile} from 'node:fs/promises';
 
 test('sends only Japanese runs to the analyzer in mixed Korean and Japanese lyrics',async()=>{
   const analyzed=[];
-  class Engine{
-    async init(){}
-    async convert(text){analyzed.push(text);return `<${text}>`;}
+  class Worker{
+    postMessage({id,text}){analyzed.push(text);queueMicrotask(()=>this.onmessage({data:{id,text:`<${text}>`}}));}
+    terminate(){}
   }
-  const context={globalThis:null,Kuroshiro:{default:Engine},KuromojiAnalyzer:class {}};
+  const context={globalThis:null,Worker,setTimeout,clearTimeout,queueMicrotask};
   context.globalThis=context;
   vm.runInNewContext(await readFile(new URL('./japanese-romanization.js',import.meta.url),'utf8'),context);
   const result=await context.JapaneseRomanization.romanizeJapanese('사랑해 ずっと 함께해');
